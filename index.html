@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical SEO Workstation Pro | Screaming-Frog Style Web Crawler</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Developer Light Theme Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Application Command Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <div class="brand-meta">
+          <div class="brand-title-row">
+            <h1 class="brand-title">Technical SEO</h1>
+            <span class="dev-badge">DEVELOPER WORKSTATION</span>
+          </div>
+          <span class="brand-sub">Universal Technical SEO Audit Engine</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="system-status">
+          <span class="dot online"></span>
+          <span id="serverStatusText">Engine Ready</span>
+        </div>
+        
+        <button type="button" id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+          <span id="themeLabel">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workstation Layout -->
+  <main class="workstation-container">
+
+    <!-- Developer URL Control Panel -->
+    <section class="panel control-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="fa-solid fa-terminal"></i> Target Website Configuration
+        </div>
+      </div>
+
+      <form id="auditForm" class="control-form">
+        <div class="address-bar-group">
+          <div class="address-input-wrapper">
+            <span class="protocol-lock"><i class="fa-solid fa-lock"></i> https://</span>
+            <input 
+              type="text" 
+              id="targetUrlInput" 
+              placeholder="enter domain or full URL (e.g. dreamsdesign.in)" 
+              required
+              autocomplete="off"
+            />
+            <button type="button" id="clearInputBtn" class="btn-clear hidden" title="Clear input">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn-run">
+            <i class="fa-solid fa-play" id="btnIcon"></i>
+            <span id="btnText">Run Crawl & Audit</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Live Crawl Progress Indicator -->
+      <div id="progressSection" class="crawl-progress-bar-wrapper hidden">
+        <div class="progress-meta">
+          <span id="progressStatusText" class="meta-status"><i class="fa-solid fa-spinner fa-spin"></i> Initializing sitemap discovery...</span>
+          <span id="progressCountText" class="meta-count">0 / 0 pages</span>
+          <span id="elapsedTimeText" class="meta-timer">00:00</span>
+        </div>
+        <div class="progress-track">
+          <div id="progressBar" class="progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Developer Health Metrics Summary Toolbar -->
+    <section id="resultsDashboard" class="panel metrics-panel hidden">
+      
+      <!-- Score Circle Container -->
+      <div class="score-box">
+        <div class="gauge-container">
+          <svg class="score-svg" viewBox="0 0 100 100">
+            <circle class="score-bg" cx="50" cy="50" r="42"></circle>
+            <circle id="scoreProgressCircle" class="score-fill" cx="50" cy="50" r="42" stroke-dasharray="263.89" stroke-dashoffset="263.89"></circle>
+          </svg>
+          <div class="score-inner">
+            <span id="scoreNumber" class="score-val">0</span>
+            <span class="score-max">/100</span>
+          </div>
+        </div>
+
+        <div class="score-meta">
+          <span class="score-title">HEALTH SCORE</span>
+          <span id="scoreGradeBadge" class="grade-pill grade-f">🔴 POOR (F)</span>
+        </div>
+      </div>
+
+      <!-- Compact High-Density Metric Counters -->
+      <div class="metrics-grid">
+        
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">PAGES CRAWLED</span>
+            <i class="fa-solid fa-sitemap metric-icon blue"></i>
+          </div>
+          <span class="metric-val" id="statTotalPages">0</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">CRITICAL ISSUES</span>
+            <i class="fa-solid fa-triangle-exclamation metric-icon red"></i>
+          </div>
+          <span class="metric-val text-red" id="statCritical">0</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">WARNINGS</span>
+            <i class="fa-solid fa-circle-exclamation metric-icon yellow"></i>
+          </div>
+          <span class="metric-val text-yellow" id="statWarnings">0</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">INFO NOTICES</span>
+            <i class="fa-solid fa-info-circle metric-icon blue"></i>
+          </div>
+          <span class="metric-val text-blue" id="statInfo">0</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">CLEAN PAGES</span>
+            <i class="fa-solid fa-circle-check metric-icon green"></i>
+          </div>
+          <span class="metric-val text-green" id="statClean">0</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Main Data Workstation Section (Tabs & Table) -->
+    <section id="contentTabsSection" class="panel data-panel hidden">
+      
+      <!-- Tab Header Bar -->
+      <div class="tab-bar">
+        <div class="nav-tabs">
+          <button type="button" class="tab-btn active" data-tab="issuesTab">
+            <i class="fa-solid fa-list-ul"></i> Audit Matrix (<span id="tabIssueCount">0</span> Issues)
+          </button>
+          <button type="button" class="tab-btn" data-tab="terminalTab">
+            <i class="fa-solid fa-code"></i> Live Output Console
+          </button>
+        </div>
+
+        <div class="export-actions">
+          <a href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener" id="openGoogleSheetBtn" class="btn-action btn-green">
+            <i class="fa-solid fa-file-excel"></i> Open Google Sheet
+          </a>
+          <button type="button" id="exportCsvBtn" class="btn-action">
+            <i class="fa-solid fa-file-export"></i> Export CSV
+          </button>
+          <button type="button" id="exportJsonBtn" class="btn-action">
+            <i class="fa-solid fa-file-code"></i> Export JSON
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Issues Audit Matrix Table -->
+      <div id="issuesTab" class="tab-content active">
+        
+        <!-- Filter Toolbar -->
+        <div class="table-filter-bar">
+          <div class="search-input-group">
+            <i class="fa-solid fa-search search-icon"></i>
+            <input type="text" id="tableSearchInput" placeholder="Filter by URL, category, or issue detail..." />
+          </div>
+
+          <div class="filter-controls-group">
+            <div class="severity-tabs">
+              <button type="button" class="sev-tab active" data-severity="ALL">All</button>
+              <button type="button" class="sev-tab red" data-severity="🔴 Critical">🔴 Critical</button>
+              <button type="button" class="sev-tab yellow" data-severity="🟡 Warning">🟡 Warning</button>
+              <button type="button" class="sev-tab blue" data-severity="🔵 Info">🔵 Info</button>
+            </div>
+
+            <select id="categoryFilterSelect" class="dev-select">
+              <option value="ALL">All Categories</option>
+              <option value="Indexability">Indexability</option>
+              <option value="Meta Tags">Meta Tags</option>
+              <option value="Headings">Headings</option>
+              <option value="Page Health">Page Health</option>
+              <option value="Links">Links</option>
+              <option value="Images">Images</option>
+              <option value="Content">Content</option>
+              <option value="Social / OG">Social / OG</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- High-Density Data Matrix -->
+        <div class="matrix-table-wrapper">
+          <table class="dev-matrix-table">
+            <thead>
+              <tr>
+                <th style="width: 110px;">SEVERITY</th>
+                <th style="width: 140px;">CATEGORY</th>
+                <th style="width: 240px;">AUDIT CHECK</th>
+                <th>TARGET URL</th>
+                <th style="width: 320px;">RECOMMENDED FIX</th>
+              </tr>
+            </thead>
+            <tbody id="issuesTableBody">
+              <tr>
+                <td colspan="5" class="table-placeholder">
+                  <i class="fa-solid fa-folder-open placeholder-icon"></i>
+                  <p>No audit data loaded yet. Enter a target URL above to start scanning.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="matrix-footer">
+          <span id="tableResultsCount">Showing 0 issues</span>
+        </div>
+
+      </div>
+
+      <!-- Tab 2: Terminal Console -->
+      <div id="terminalTab" class="tab-content">
+        <div class="console-toolbar">
+          <span class="console-title"><i class="fa-solid fa-terminal"></i> Standard Subprocess Logs Stream</span>
+          <div class="console-opts">
+            <label class="check-opt">
+              <input type="checkbox" id="autoscrollCheck" checked /> Auto-scroll
+            </label>
+            <button type="button" id="copyLogsBtn" class="btn-sm" title="Copy Console Logs">
+              <i class="fa-solid fa-copy"></i> Copy Logs
+            </button>
+          </div>
+        </div>
+
+        <div id="terminalConsole" class="dev-terminal-box">
+          <div class="log-line system">[System] Technical SEO Workstation initialized. Ready for task execution.</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Bar -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Client Script -->
+  <script src="app.js?v=2.5"></script>
+</body>
+</html>
