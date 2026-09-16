@@ -42,8 +42,8 @@ parsed_base  = urlparse(INPUT_URL)
 BASE_URL     = f"{parsed_base.scheme}://{parsed_base.netloc}"
 CLIENT_DOMAIN = parsed_base.netloc.replace("www.", "")
 
-# Use the production webhook URL as requested
-WEBHOOK_URL = "https://n8n.srv891967.hstgr.cloud/webhook/fd1f9be6-432c-450e-bbc9-5849dbe5d7c5"
+# Use the test webhook URL as requested
+WEBHOOK_URL = "https://n8n.srv891967.hstgr.cloud/webhook-test/fd1f9be6-432c-450e-bbc9-5849dbe5d7c5"
 HEADERS     = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
