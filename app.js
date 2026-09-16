@@ -14,9 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetUrlInput = document.getElementById("targetUrlInput");
   const clearInputBtn = document.getElementById("clearInputBtn");
   const submitBtn = document.getElementById("submitBtn");
+  const resetDashboardBtn = document.getElementById("resetDashboardBtn");
   const btnIcon = document.getElementById("btnIcon");
   const btnText = document.getElementById("btnText");
   const presetChips = document.querySelectorAll(".preset-chip");
+
+  if (resetDashboardBtn) {
+    resetDashboardBtn.addEventListener("click", () => {
+      resetDashboard();
+      targetUrlInput.value = "";
+      clearInputBtn.classList.add("hidden");
+      resetDashboardBtn.classList.add("hidden");
+      showToast("Ready for a new audit!", "success");
+      targetUrlInput.focus();
+    });
+  }
 
   const serverStatusText = document.getElementById("serverStatusText");
   const progressSection = document.getElementById("progressSection");
@@ -239,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (job.status === "completed") {
         progressBar.style.width = "100%";
         progressStatusText.innerHTML = '<i class="fa-solid fa-circle-check"></i> Audit Completed';
+        if (resetDashboardBtn) resetDashboardBtn.classList.remove("hidden");
       } else {
         progressStatusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Crawling and auditing pages (${pct}%)...`;
       }
@@ -612,6 +625,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     resultsDashboard.classList.add("hidden");
     contentTabsSection.classList.add("hidden");
+    progressSection.classList.add("hidden");
+    if (resetDashboardBtn) resetDashboardBtn.classList.add("hidden");
   }
 
   // ---------------------------------------------------------------------------
