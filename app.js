@@ -207,9 +207,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await resp.json();
 
-      // If the current server job was NOT started by this visitor,
-      // ignore it — don't leak another person's results onto this screen.
-      if (data.job_id && activeJobId && data.job_id !== activeJobId) {
+      // A fresh visitor (no job ID stored) must never see another
+      // person's results. Only show data when the visitor started
+      // this specific audit.
+      if (!activeJobId || !data.job_id || data.job_id !== activeJobId) {
         return;
       }
 
