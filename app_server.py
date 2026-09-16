@@ -14,6 +14,7 @@ import json
 import time
 import threading
 import subprocess
+import uuid
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
 
@@ -27,6 +28,7 @@ DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 # Global state for current audit job
 current_job = {
     "status": "idle",       # "idle", "running", "completed", "error"
+    "job_id": None,         # unique id per audit run (per-visitor isolation)
     "url": "",
     "sheet_url": "",
     "total_pages": 0,
@@ -196,6 +198,12 @@ class SEOCrawlerRequestHandler(SimpleHTTPRequestHandler):
                     self.wfile.write(json.dumps({"error": "An audit is already in progress"}).encode("utf-8"))
                     return
 
+            # Assign a unique Job ID for this audit run so each visitor
+            # only ever sees the audit they started themselves.
+            job_id = str(uuid.uuid4())
+            with job_lock:
+                current_job["job_id"] = job_id
+
             # Start background thread
             t = threading.Thread(target=run_crawler_subprocess, args=(target_url,), daemon=True)
             t.start()
@@ -205,7 +213,8 @@ class SEOCrawlerRequestHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({
                 "message": "Audit started successfully",
-                "target_url": target_url
+                "target_url": target_url,
+                "job_id": job_id
             }).encode("utf-8"))
             return
 

@@ -73,6 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentSeverityFilter = "ALL";
   let currentCategoryFilter = "ALL";
   let lastLogIndex = 0;
+  // Job ID of the audit THIS visitor started (per-tab, survives refresh).
+  // Different visitors get a fresh screen because their stored ID won't match.
+  let activeJobId = sessionStorage.getItem("seo_job_id") || null;
 
   // ---------------------------------------------------------------------------
   // Theme Toggle Engine (Light / Dark)
@@ -163,6 +166,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (response.ok) {
+        if (data.job_id) {
+          activeJobId = data.job_id;
+          sessionStorage.setItem("seo_job_id", activeJobId);
+        }
         showToast("🚀 Scan initiated for " + url, "success");
         startTimer();
         startPolling();
@@ -199,6 +206,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!resp.ok) return;
 
       const data = await resp.json();
+
+      // If the current server job was NOT started by this visitor,
+      // ignore it — don't leak another person's results onto this screen.
+      if (data.job_id && activeJobId && data.job_id !== activeJobId) {
+        return;
+      }
+
       updateDashboardFromJob(data);
 
       if (data.status === "completed" || data.status === "error") {
@@ -618,6 +632,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetDashboard() {
     lastLogIndex = 0;
     parsedIssues = [];
+    activeJobId = null;
+    sessionStorage.removeItem("seo_job_id");
     terminalConsole.innerHTML = "";
     progressBar.style.width = "0%";
     progressCountText.innerText = "0 / 0 pages";
