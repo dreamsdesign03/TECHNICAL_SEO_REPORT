@@ -614,6 +614,125 @@ document.addEventListener("DOMContentLoaded", () => {
     contentTabsSection.classList.add("hidden");
   }
 
+  // ---------------------------------------------------------------------------
+  // Health Score Modal & Analytics Controller
+  // ---------------------------------------------------------------------------
+  const healthScoreCard = document.getElementById("healthScoreCard");
+  const scoreModal = document.getElementById("scoreModal");
+  const closeScoreModalBtn = document.getElementById("closeScoreModalBtn");
+  const modalDismissBtn = document.getElementById("modalDismissBtn");
+
+  const modalScoreVal = document.getElementById("modalScoreVal");
+  const modalScoreGrade = document.getElementById("modalScoreGrade");
+  const modalCleanRatio = document.getElementById("modalCleanRatio");
+  const modalCleanPagesSub = document.getElementById("modalCleanPagesSub");
+  const modalPenaltyVal = document.getElementById("modalPenaltyVal");
+  const modalPenaltyAvg = document.getElementById("modalPenaltyAvg");
+  const modalIssuesRatio = document.getElementById("modalIssuesRatio");
+
+  const modalCleanPercentText = document.getElementById("modalCleanPercentText");
+  const modalBarClean = document.getElementById("modalBarClean");
+  const modalBarAffected = document.getElementById("modalBarAffected");
+  const modalBarCritical = document.getElementById("modalBarCritical");
+  const modalBarWarning = document.getElementById("modalBarWarning");
+  const modalBarInfo = document.getElementById("modalBarInfo");
+
+  const modalLegendClean = document.getElementById("modalLegendClean");
+  const modalLegendAffected = document.getElementById("modalLegendAffected");
+  const modalLegendCritical = document.getElementById("modalLegendCritical");
+  const modalLegendWarning = document.getElementById("modalLegendWarning");
+  const modalLegendInfo = document.getElementById("modalLegendInfo");
+
+  if (healthScoreCard) {
+    healthScoreCard.addEventListener("click", openScoreModal);
+  }
+
+  if (closeScoreModalBtn) closeScoreModalBtn.addEventListener("click", closeScoreModal);
+  if (modalDismissBtn) modalDismissBtn.addEventListener("click", closeScoreModal);
+
+  if (scoreModal) {
+    scoreModal.addEventListener("click", (e) => {
+      if (e.target === scoreModal) closeScoreModal();
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && scoreModal && !scoreModal.classList.contains("hidden")) {
+      closeScoreModal();
+    }
+  });
+
+  function openScoreModal() {
+    if (!scoreModal) return;
+
+    const currentScore = parseInt(scoreNumber.innerText) || 0;
+    const totalPages = parseInt(statTotalPages.innerText) || 0;
+    const criticalCount = parseInt(statCritical.innerText) || 0;
+    const warningCount = parseInt(statWarnings.innerText) || 0;
+    const infoCount = parseInt(statInfo.innerText) || 0;
+    const cleanPages = parseInt(statClean.innerText) || 0;
+    const totalIssues = parsedIssues.length || (criticalCount + warningCount + infoCount);
+    const affectedPages = Math.max(0, totalPages - cleanPages);
+
+    // Calculate Penalty Score & Ratios
+    const totalPenalty = (criticalCount * 5.0) + (warningCount * 2.0) + (infoCount * 0.5);
+    const avgPenalty = totalPages > 0 ? (totalPenalty / totalPages).toFixed(1) : "0.0";
+    const issuesPerPage = totalPages > 0 ? (totalIssues / totalPages).toFixed(1) : "0.0";
+    const cleanPct = totalPages > 0 ? Math.round((cleanPages / totalPages) * 100) : 0;
+    const affectedPct = 100 - cleanPct;
+
+    // Severity weighting ratio
+    const criticalWeight = criticalCount * 5.0;
+    const warningWeight = warningCount * 2.0;
+    const infoWeight = infoCount * 0.5;
+    const sumWeight = totalPenalty > 0 ? totalPenalty : 1;
+
+    const critBarPct = Math.round((criticalWeight / sumWeight) * 100);
+    const warnBarPct = Math.round((warningWeight / sumWeight) * 100);
+    const infoBarPct = 100 - (critBarPct + warnBarPct);
+
+    // Update KPI Card Displays
+    modalScoreVal.innerText = currentScore;
+    let gradeBadgeText = "🔴 POOR (F)";
+    let gradeClass = "grade-f";
+
+    if (currentScore >= 90) { gradeBadgeText = "🟢 EXCELLENT (A)"; gradeClass = "grade-a"; }
+    else if (currentScore >= 75) { gradeBadgeText = "🟡 GOOD (B)"; gradeClass = "grade-b"; }
+    else if (currentScore >= 50) { gradeBadgeText = "🟠 NEEDS WORK (C)"; gradeClass = "grade-c"; }
+
+    modalScoreGrade.className = `grade-pill ${gradeClass}`;
+    modalScoreGrade.innerText = gradeBadgeText;
+
+    modalCleanRatio.innerText = `${cleanPct}%`;
+    modalCleanPagesSub.innerText = `${cleanPages} / ${totalPages} pages`;
+
+    modalPenaltyVal.innerText = Math.round(totalPenalty);
+    modalPenaltyAvg.innerText = `${avgPenalty} pts / page`;
+    modalIssuesRatio.innerText = issuesPerPage;
+
+    // Update Graph Bars
+    modalCleanPercentText.innerText = `${cleanPct}% Clean (${cleanPages}/${totalPages} pages)`;
+    modalBarClean.style.width = `${cleanPct}%`;
+    modalBarAffected.style.width = `${affectedPct}%`;
+
+    modalLegendClean.innerText = `${cleanPages} pages (${cleanPct}%)`;
+    modalLegendAffected.innerText = `${affectedPages} pages (${affectedPct}%)`;
+
+    modalBarCritical.style.width = `${critBarPct}%`;
+    modalBarWarning.style.width = `${warnBarPct}%`;
+    modalBarInfo.style.width = `${Math.max(0, infoBarPct)}%`;
+
+    modalLegendCritical.innerText = `${criticalCount} issues (${criticalWeight.toFixed(1)} pts)`;
+    modalLegendWarning.innerText = `${warningCount} issues (${warningWeight.toFixed(1)} pts)`;
+    modalLegendInfo.innerText = `${infoCount} notices (${infoWeight.toFixed(1)} pts)`;
+
+    scoreModal.classList.remove("hidden");
+  }
+
+  function closeScoreModal() {
+    if (scoreModal) scoreModal.classList.add("hidden");
+  }
+
   function showToast(msg, type = "success") {
     const container = document.getElementById("toastContainer");
     const toast = document.createElement("div");

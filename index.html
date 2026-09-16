@@ -99,7 +99,7 @@
     <section id="resultsDashboard" class="panel metrics-panel hidden">
       
       <!-- Score Circle Container -->
-      <div class="score-box">
+      <div class="score-box interactive-score-card" id="healthScoreCard" title="Click to view detailed Health Score formula, ratios & graphs">
         <div class="gauge-container">
           <svg class="score-svg" viewBox="0 0 100 100">
             <circle class="score-bg" cx="50" cy="50" r="42"></circle>
@@ -112,9 +112,10 @@
         </div>
 
         <div class="score-meta">
-          <span class="score-title">HEALTH SCORE</span>
+          <span class="score-title">HEALTH SCORE <i class="fa-solid fa-circle-info hint-icon"></i></span>
           <span id="scoreGradeBadge" class="grade-pill grade-f">🔴 POOR (F)</span>
         </div>
+        <span class="score-click-label"><i class="fa-solid fa-chart-pie"></i> Click for Analytics</span>
       </div>
 
       <!-- Compact High-Density Metric Counters -->
@@ -277,6 +278,142 @@
 
   <!-- Toast Notification Bar -->
   <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Detailed Health Score Analytics Modal -->
+  <div id="scoreModal" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-chart-line modal-header-icon"></i>
+          <div>
+            <h3>SEO Health Score & Ratio Analytics</h3>
+            <span class="modal-sub">Audit Calculation Engine & Issue Weight Breakdown</span>
+          </div>
+        </div>
+        <button type="button" id="closeScoreModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Top Key KPI Row -->
+        <div class="modal-kpi-row">
+          <div class="kpi-card">
+            <span class="kpi-label">OVERALL SCORE</span>
+            <span class="kpi-val" id="modalScoreVal">0</span>
+            <span class="kpi-badge" id="modalScoreGrade">Grade F</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">CLEAN PAGES RATIO</span>
+            <span class="kpi-val text-green" id="modalCleanRatio">0%</span>
+            <span class="kpi-sub" id="modalCleanPagesSub">0 / 0 pages</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">PENALTY SCORE</span>
+            <span class="kpi-val text-red" id="modalPenaltyVal">0</span>
+            <span class="kpi-sub" id="modalPenaltyAvg">0.0 pts / page</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">ISSUES RATIO</span>
+            <span class="kpi-val text-yellow" id="modalIssuesRatio">0.0</span>
+            <span class="kpi-sub">issues per page</span>
+          </div>
+        </div>
+
+        <!-- Visual Distribution Graphs -->
+        <div class="modal-section">
+          <h4 class="section-title"><i class="fa-solid fa-chart-pie"></i> Visual Health & Penalty Distribution Ratios</h4>
+          
+          <div class="graph-block">
+            <div class="graph-meta">
+              <span>Page Cleanliness Distribution:</span>
+              <strong id="modalCleanPercentText">0% Clean</strong>
+            </div>
+            <div class="multi-progress-track">
+              <div id="modalBarClean" class="progress-segment seg-green" style="width: 0%;" title="Clean Pages"></div>
+              <div id="modalBarAffected" class="progress-segment seg-red" style="width: 100%;" title="Pages with Issues"></div>
+            </div>
+            <div class="graph-legend">
+              <span><i class="fa-solid fa-square text-green"></i> Clean Pages: <strong id="modalLegendClean">0</strong></span>
+              <span><i class="fa-solid fa-square text-red"></i> Pages with Issues: <strong id="modalLegendAffected">0</strong></span>
+            </div>
+          </div>
+
+          <div class="graph-block" style="margin-top: 16px;">
+            <div class="graph-meta">
+              <span>Severity Weighting Impact Distribution:</span>
+              <span>Weighted Penalty Contribution</span>
+            </div>
+            <div class="multi-progress-track">
+              <div id="modalBarCritical" class="progress-segment seg-red" style="width: 0%;" title="Critical Issues"></div>
+              <div id="modalBarWarning" class="progress-segment seg-yellow" style="width: 0%;" title="Warnings"></div>
+              <div id="modalBarInfo" class="progress-segment seg-blue" style="width: 0%;" title="Info Notices"></div>
+            </div>
+            <div class="graph-legend">
+              <span><i class="fa-solid fa-square text-red"></i> Critical (5.0x penalty): <strong id="modalLegendCritical">0</strong></span>
+              <span><i class="fa-solid fa-square text-yellow"></i> Warnings (2.0x penalty): <strong id="modalLegendWarning">0</strong></span>
+              <span><i class="fa-solid fa-square text-blue"></i> Info (0.5x penalty): <strong id="modalLegendInfo">0</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formula Explanation Card -->
+        <div class="modal-section formula-card">
+          <h4 class="section-title"><i class="fa-solid fa-calculator"></i> Mathematical Health Score Formula</h4>
+          <p class="formula-intro">The SEO Health Score evaluates technical perfection across all crawled pages on a <strong>0 to 100 scale</strong>. Each issue type deducts weighted points normalized by total site size:</p>
+          
+          <div class="formula-box">
+            <code>Total Penalty = (Critical × 5.0) + (Warnings × 2.0) + (Info × 0.5)</code>
+            <code>Penalty Per Page = Total Penalty ÷ Total Crawled Pages</code>
+            <code>Final Score = Max( 0 , 100 - (5.0 × Penalty Per Page) )</code>
+          </div>
+        </div>
+
+        <!-- Grade Scale Standards Table -->
+        <div class="modal-section">
+          <h4 class="section-title"><i class="fa-solid fa-award"></i> Audit Score Grading Scale</h4>
+          <table class="modal-table">
+            <thead>
+              <tr>
+                <th>GRADE</th>
+                <th>SCORE RANGE</th>
+                <th>STATUS</th>
+                <th>DESCRIPTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="grade-pill grade-a">🟢 Excellent (A)</span></td>
+                <td><strong>90 - 100%</strong></td>
+                <td><span class="text-green font-semibold">Production Ready</span></td>
+                <td>Near zero critical errors; minor optimisations only.</td>
+              </tr>
+              <tr>
+                <td><span class="grade-pill grade-b">🟡 Good (B)</span></td>
+                <td><strong>75 - 89%</strong></td>
+                <td><span class="text-yellow font-semibold">Healthy</span></td>
+                <td>Good overall structure; moderate warnings to clean up.</td>
+              </tr>
+              <tr>
+                <td><span class="grade-pill grade-c">🟠 Needs Work (C)</span></td>
+                <td><strong>50 - 74%</strong></td>
+                <td><span class="text-orange font-semibold">Action Required</span></td>
+                <td>Noticeable technical flaws affect crawl budget and indexability.</td>
+              </tr>
+              <tr>
+                <td><span class="grade-pill grade-f">🔴 Poor (F)</span></td>
+                <td><strong>0 - 49%</strong></td>
+                <td><span class="text-red font-semibold">Critical Risk</span></td>
+                <td>Severe indexability, broken links, thin content, or load time issues.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="modalDismissBtn" class="btn-action">Close Window</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Client Script -->
   <script src="app.js?v=2.5"></script>

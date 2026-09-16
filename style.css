@@ -903,3 +903,298 @@ body {
   .address-bar-group { flex-direction: column; }
   .btn-run { width: 100%; justify-content: center; padding: 12px; }
 }
+
+/* Interactive Score Card Hover Effect */
+.interactive-score-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  border-radius: var(--radius-btn);
+  padding: 8px 12px;
+}
+
+.interactive-score-card:hover {
+  background-color: var(--bg-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.score-title .hint-icon {
+  font-size: 11px;
+  color: var(--primary);
+  margin-left: 4px;
+}
+
+.score-click-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary);
+  display: block;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Health Score Analytics Modal Backdrop & Dialog */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-dialog {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 740px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-panel);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-subtle);
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-header-icon {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.modal-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.modal-close-btn:hover {
+  color: var(--sev-red);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Modal KPI Cards */
+.modal-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.kpi-card {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-panel);
+  border-radius: var(--radius-panel);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-subtle);
+  margin-bottom: 4px;
+}
+
+.kpi-val {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-main);
+}
+
+.kpi-badge {
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.kpi-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Modal Graphs & Distribution Bars */
+.modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.graph-block {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-panel);
+  border-radius: var(--radius-btn);
+  padding: 12px;
+}
+
+.graph-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.multi-progress-track {
+  height: 14px;
+  background-color: var(--border-panel);
+  border-radius: 7px;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+}
+
+.progress-segment {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.seg-green { background-color: var(--sev-green); }
+.seg-red { background-color: var(--sev-red); }
+.seg-yellow { background-color: var(--sev-yellow); }
+.seg-blue { background-color: var(--sev-blue); }
+
+.graph-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.graph-legend strong {
+  color: var(--text-main);
+}
+
+/* Formula Explanation Card */
+.formula-card {
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-panel);
+  padding: 14px;
+}
+
+.formula-intro {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.formula-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: var(--radius-btn);
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--primary);
+}
+
+/* Modal Standard Table */
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.modal-table th, .modal-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-panel);
+}
+
+.modal-table th {
+  background-color: var(--bg-subtle);
+  color: var(--text-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-panel);
+  display: flex;
+  justify-content: flex-end;
+  background: var(--bg-subtle);
+}
+
+@media (max-width: 650px) {
+  .modal-kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+
