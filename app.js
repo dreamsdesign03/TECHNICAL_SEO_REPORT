@@ -201,18 +201,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function fetchStatus() {
+    // Only poll the audit THIS visitor started. No active job → fresh screen.
+    if (!activeJobId) return;
+
     try {
-      const resp = await fetch("/api/status");
+      const resp = await fetch(`/api/status?job_id=${encodeURIComponent(activeJobId)}`);
       if (!resp.ok) return;
 
       const data = await resp.json();
-
-      // A fresh visitor (no job ID stored) must never see another
-      // person's results. Only show data when the visitor started
-      // this specific audit.
-      if (!activeJobId || !data.job_id || data.job_id !== activeJobId) {
-        return;
-      }
 
       updateDashboardFromJob(data);
 
